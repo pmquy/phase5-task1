@@ -1,0 +1,12 @@
+name: setup-tools
+
+runs:
+  using: "composite"
+  steps:
+    - run: |
+        curl -sSfL https://raw.githubusercontent.com/anchore/syft/main/install.sh | sh
+      shell: bash
+
+    - run: |
+        curl -sSfL https://raw.githubusercontent.com/anchore/grype/main/install.sh | sh
+      shell: bash

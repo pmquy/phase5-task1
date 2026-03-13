@@ -35,8 +35,8 @@ jobs:
           tags: |
             ${{ inputs.registry }}/${{ inputs.image-name }}:${{ github.sha }}
             ${{ inputs.registry }}/${{ inputs.image-name }}:latest
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
+          cache-from: type=registry,ref=${{ inputs.registry }}/${{ inputs.image-name }}:cache
+          cache-to: type=registry,mode=max,ref=${{ inputs.registry }}/${{ inputs.image-name }}:cache
 
       - name: Run Trivy vulnerability scanner
         uses: aquasecurity/trivy-action@0.34.2
