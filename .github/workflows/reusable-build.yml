@@ -37,24 +37,32 @@ jobs:
       - name: Login
         run: echo ${{ secrets.REGISTRY_TOKEN }} | docker login ${{ inputs.registry }} -u ${{ inputs.username }} --password-stdin
 
-      - uses: docker/build-push-action@v5
+      - name: Build and Load Local Image
+        uses: docker/build-push-action@v6
         with:
           context: .
-          push: true
-          tags: |
-            ${{ inputs.registry }}/${{ inputs.image-name }}:${{ github.sha }}
-            ${{ inputs.registry }}/${{ inputs.image-name }}:latest
-          cache-from: |
-            type=registry,ref=${{ inputs.registry }}/${{ inputs.image-name }}:cache
-          cache-to: |
-            type=registry,ref=${{ inputs.registry }}/${{ inputs.image-name }}:cache,mode=max,image-manifest=true
+          load: true
+          tags: local-scan-target:test
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
 
       - name: Run Trivy vulnerability scanner
-        uses: aquasecurity/trivy-action@0.34.2
+        uses: aquasecurity/trivy-action@v0.35.0
         with:
           scan-type: "image"
-          image-ref: ${{ inputs.registry }}/${{ inputs.image-name }}:latest
+          image-ref: local-scan-target:test
           format: "table"
           exit-code: 0
           ignore-unfixed: true
           severity: CRITICAL,HIGH
+
+      - name: Push Image to Registry
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: true
+          tags:
+            ${{ inputs.registry }}/${{ inputs.image-name }}:${{ github.sha }}
+            ${{ inputs.registry }}/${{ inputs.image-name }}:latest
+          cache-from: type=gha
+          cache-to: type=gha,mode=max

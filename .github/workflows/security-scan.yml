@@ -1,0 +1,26 @@
+name: Security Scan Workflow
+
+on:
+  push:
+    branches: ["master"]
+  pull_request:
+    branches: ["master"]
+
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Syft and Grype
+        uses: ./.github/actions/setup-tools
+
+      - name: Add bin to PATH
+        run: echo "${{ github.workspace }}/bin" >> $GITHUB_PATH
+
+      - name: Generate SBOM
+        run: syft . -o cyclonedx-json=sbom.json
+
+      - name: Scan for vulnerabilities
+        run: grype sbom.json

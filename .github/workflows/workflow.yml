@@ -6,6 +6,10 @@ on:
   pull_request:
     branches: [master]
 
+permissions:
+  id-token: write
+  contents: read
+
 jobs:
   test:
     runs-on: ubuntu-latest
@@ -15,8 +19,6 @@ jobs:
         go-version: [1.21, 1.22]
 
     steps:
-      - uses: pmquy/phase5-task1/.github/actions/setup-tools@v2
-
       - uses: actions/checkout@v4
 
       - uses: actions/setup-go@v5
@@ -39,7 +41,7 @@ jobs:
 
   build-and-push:
     needs: test
-    uses: pmquy/phase5-task1/.github/workflows/reusable-build.yml@v2
+    uses: ./.github/workflows/reusable-build.yml
     with:
       image-name: lokikurri/phase5-task1
       registry: docker.io
