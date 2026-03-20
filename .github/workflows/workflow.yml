@@ -9,6 +9,7 @@ on:
 permissions:
   id-token: write
   contents: read
+  packages: write
 
 jobs:
   test:
@@ -43,8 +44,8 @@ jobs:
     needs: test
     uses: ./.github/workflows/reusable-build.yml
     with:
-      image-name: lokikurri/phase5-task1
+      image-name: ${{ github.actor }}/phase5-task1
       registry: ghcr.io
-      username: lokikurri
+      username: ${{ github.actor }}
     secrets:
-      REGISTRY_TOKEN: ${{ secrets.REGISTRY_TOKEN }}
+      REGISTRY_TOKEN: ${{ secrets.GITHUB_TOKEN }}
