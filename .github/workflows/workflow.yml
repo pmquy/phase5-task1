@@ -44,7 +44,7 @@ jobs:
     uses: ./.github/workflows/reusable-build.yml
     with:
       image-name: lokikurri/phase5-task1
-      registry: docker.io
+      registry: ghcr.io
       username: lokikurri
     secrets:
       REGISTRY_TOKEN: ${{ secrets.REGISTRY_TOKEN }}
